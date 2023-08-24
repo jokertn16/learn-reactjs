@@ -1,8 +1,9 @@
-import { useState } from 'react';
 import './App.css';
 import Expense from './components/Expense/Expense';
+import { useEffect, useState } from 'react';
 import NewExpense from './components/NewExpense/NewExpense';
 import Navigation from './components/Navigation/Navigation';
+import Login from './components/Login/Login';
 
 function App() {
   const initialExpenses = [
@@ -12,7 +13,39 @@ function App() {
     {id: 4, title: 'Dinner', amount: 20, date: new Date(2023, 2, 6)},
   ];
 
+  // const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('is_login'));
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [expenses, setExpenses] = useState(initialExpenses);
+
+  useEffect(() => {
+    if(localStorage.getItem('is_login') === '1') {
+      setIsLoggedIn(true);
+    }
+  }, [])
+
+  const loginHandler = (username, password) => {
+    /// TO-DO: check login
+    setIsLoggedIn(true);
+    localStorage.setItem('is_login', '1')
+  }
+  const logoutHandler = () => {
+    setIsLoggedIn(false);
+    localStorage.setItem('is_login', '0')
+
+
+  }
+  // const [expenses, setExpenses] = useState(initialExpenses);
+
+  // const loginHandler = (username, password) => {
+  //   /// TO-DO: check login
+  //   setIsLoggedIn(true);
+  //   localStorage.setItem('is_login', true)
+  // }
+  // const logoutHandler = () => {
+  //   setIsLoggedIn(false);
+  //   localStorage.setItem('is_login', false)
+
+  // }
 
   const addExpenseHandler = (data) => {
     setExpenses(previousState => {
@@ -22,9 +55,17 @@ function App() {
 
   return (
     <>
-      <Navigation />
-      <NewExpense onAddExpense={addExpenseHandler} />
-      <Expense expenses={expenses}></Expense>
+      {isLoggedIn && 
+        <Navigation onLogout={logoutHandler} >
+          <NewExpense onAddExpense={addExpenseHandler} />
+          <Expense expenses={expenses}></Expense>
+        </Navigation>
+      }
+
+      {!isLoggedIn && <Login onLogin={loginHandler} />}
+
+
+      
     </>
   );
 }

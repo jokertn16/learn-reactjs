@@ -12,19 +12,33 @@ function ExpenseForm(props) {
 
     const [isValidTitle, setIsValidTitle] = useState(true);
     const [isValidAmount, setIsValidAmount] = useState(true);
+    const [formIsValid, setFormIsValid] = useState(false);
+
+    /// continue expenseForm validation
+
+    const titleChangeHandler = (event) => {
+        setTitle(event.target.value);
+        setFormIsValid(event.target.value.trim().length !== 0
+            && !isNaN(amount.trim()) && amount.trim().length !== 0
+            && (inputDate instanceof Date && !isNaN(inputDate)));
+    }
+
+    const amountChangeHandler = (event) => {
+        setAmount(event.target.value);
+        setFormIsValid(!isNaN(event.target.value.trim()) && event.target.value.trim().length !== 0
+            && title.trim().length !== 0
+            && (inputDate instanceof Date && !isNaN(inputDate)));
+    }
+
+    const titleValidateHandler = () => {
+        setIsValidTitle(title.trim().length !== 0);
+    }
+    const amountValidateHandler = () => {
+        setIsValidAmount(!isNaN(amount.trim()) && amount.trim().length !== 0);
+    }
 
     const submitHandler = (event) => {
         event.preventDefault();
-
-        if (title.trim().length === 0) {
-            setIsValidTitle(false);
-            return;
-        }
-
-        if (isNaN(amount.trim())) {
-            setIsValidAmount(false);
-            return;
-        }
 
         var expenseData = {
             title: title,
@@ -48,7 +62,8 @@ function ExpenseForm(props) {
                         label="Title" 
                         variant="outlined"
                         value={title}
-                        onChange={(event) => setTitle(event.target.value)}
+                        onChange={titleChangeHandler}
+                        onBlur={titleValidateHandler}
                         error={!isValidTitle}
                         helperText={!isValidTitle ? "please input a valid title" : ""}
                     />
@@ -58,9 +73,10 @@ function ExpenseForm(props) {
                         variant="outlined"
                         // type="number"
                         value={amount}
-                        onChange={(event) => setAmount(event.target.value)}
+                        onChange={amountChangeHandler}
+                        onBlur={amountValidateHandler}
                         error={!isValidAmount}
-                        helperText={!isValidTitle ? "please input a valid number" : ""}
+                        helperText={!isValidAmount ? "please input a valid number" : ""}
                     />
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DesktopDatePicker
@@ -78,6 +94,7 @@ function ExpenseForm(props) {
                         type="submit"
                         variant="contained"
                         color="primary"
+                        disabled={!formIsValid}
                         endIcon={<Send />}
                     >Add Expense</Button>
                 </Box>
