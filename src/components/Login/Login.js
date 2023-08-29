@@ -32,7 +32,6 @@ function Login(props) {
     const [usernameState, usernameDispatcher] = useReducer(usernameReducer, { value : '' , isValid : null }) ;
     const [passwordState, passwordDispatcher] = useReducer(passwordReducer, { value : '' , isValid : null }) ;
     
-    const isValidAccount = props.isValidAccount ;
 
     const usernameChangeHandler = (event) => {
         usernameDispatcher({type: 'USERNAME_INPUT_CHANGE', payload : event.target.value })
@@ -81,7 +80,6 @@ function Login(props) {
                     />
                 </Stack>
 
-                {!isValidAccount && <h2>Username or password is invalid! </h2>}
                 <Box pt={2} display='flex' justifyContent='center' alignItems='center'>
                     <Button 
                         type="submit"
