@@ -19,6 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { Button } from '@mui/material';
+import AuthContext from '../store/AuthContext';
 
 const drawerWidth = 240;
 
@@ -71,6 +72,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function PersistentDrawerLeft(props) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const ctx = React.useContext(AuthContext) ; 
+  
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -98,7 +101,7 @@ export default function PersistentDrawerLeft(props) {
             My Shop
           </Typography>
 
-          <Button color="inherit" onClick={props.onLogout} >Logout</Button>
+          <Button color="inherit" onClick={ctx.logout} >Logout</Button>
 
         </Toolbar>
       </AppBar>

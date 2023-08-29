@@ -1,60 +1,58 @@
 import { Send } from "@mui/icons-material";
 import { Box, Button, Container, Stack, TextField } from "@mui/material";
-import { useEffect, useReducer, useState } from "react";
+import { useReducer, useState } from "react";
+import * as React from 'react';
+import AuthContext from "../store/AuthContext";
 
 const usernameReducer = ( state, action ) => {
-    if(action.type === 'USENAME_INPUT_CHANGE') {
+    if(action.type === 'USERNAME_INPUT_CHANGE') {
         return { value : action.payload , isValid : action.payload.trim().length !== 0 }
     }
-    if(action.type === 'USENAME_INPUT_BLUR') {
+    if(action.type === 'USERNAME_INPUT_BLUR') {
         return { value : state.value , isValid : state.value.trim().length !== 0 }
     }
 };
 
+const passwordReducer = ( state, action ) => {
+    if(action.type === 'PASSWORD_INPUT_CHANGE') {
+        return { value : action.payload , isValid : action.payload.trim().length !== 0 }
+    }
+    if(action.type === 'PASSWORD_INPUT_BLUR') {
+        return { value : state.value , isValid : state.value.trim().length !== 0 }
+    }
+};
+
+
 function Login(props) {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
 
-    const [isValidUsername, setIsValidUsername] = useState(true);
-    const [isValidPassword, setIsValidPassword] = useState(true);
+    const ctx = React.useContext(AuthContext) ;
+    
     const [formIsValid, setFormIsValid] = useState(false);
-
-    // useEffect(() => {
-    //     console.log("1111");
-    //     setFormIsValid(username.trim().length !== 0 && password.trim().length !== 0);
-    //     return (() => {
-    //         console.log("clean up");
-    //     })
-    // },[username,password])
-
-    const [usernameState, usernameDispatcher] = useReducer(usernameReducer, { value : true , isValid : null }) ;
-
+    
+    const [usernameState, usernameDispatcher] = useReducer(usernameReducer, { value : '' , isValid : null }) ;
+    const [passwordState, passwordDispatcher] = useReducer(passwordReducer, { value : '' , isValid : null }) ;
+    
+    const isValidAccount = props.isValidAccount ;
 
     const usernameChangeHandler = (event) => {
-        // setUsername(event.target.value);
-        usernameDispatcher({type: 'USENAME_INPUT_CHANGE', payload : event.target.value })
-        setFormIsValid(event.target.value.trim().length !== 0 && password.trim().length !== 0);
+        usernameDispatcher({type: 'USERNAME_INPUT_CHANGE', payload : event.target.value })
+        setFormIsValid(event.target.value.trim().length !== 0 && passwordState.value.trim().length !== 0);
     }
     const passwordChangeHandler = (event) => {
-        setPassword(event.target.value);
-        // setFormIsValid(event.target.value.trim().length !== 0 && username.trim().length !== 0);
+        passwordDispatcher({type: 'PASSWORD_INPUT_CHANGE', payload : event.target.value })
+        setFormIsValid(event.target.value.trim().length !== 0 && usernameState.value.trim().length !== 0);
     }
 
     const validateUsernameHandler = () => {
-        setIsValidUsername(username.trim().length !== 0);
+        usernameDispatcher({type: 'USERNAME_INPUT_BLUR'})
     }
     const validatePasswordHandler = () => {
-        setIsValidPassword(password.trim().length !== 0);
+        passwordDispatcher({type: 'PASSWORD_INPUT_BLUR'})
     }
 
     const submitHandler = (event) => {
         event.preventDefault();
-        props.onLogin(username, password);
-
-        setUsername('');
-        setPassword('');
-        setIsValidUsername(true);
-        setIsValidPassword(true);
+        ctx.login(usernameState.value, passwordState.value)
     }
     return (
         <Container sx={{width: '50%'}}>
@@ -64,24 +62,26 @@ function Login(props) {
                         id="login-form-username" 
                         label="Username" 
                         variant="outlined"
-                        value={username}
+                        value={usernameState.value}
                         onChange={usernameChangeHandler}
                         onBlur={validateUsernameHandler}
-                        error={!isValidUsername}
-                        helperText={!isValidUsername ? "please input a valid username" : ""}
+                        error={usernameState.isValid === false }
+                        helperText={usernameState.isValid === false ? "please input a valid username" : ""}
                     />
                     <TextField 
                         id="login-form-password" 
                         label="Password" 
                         variant="outlined"
-                        value={password}
+                        value={passwordState.value}
                         type="password"
                         onChange={passwordChangeHandler}
                         onBlur={validatePasswordHandler}
-                        error={!isValidPassword}
-                        helperText={!isValidPassword ? "please input a valid password" : ""}
+                        error={passwordState === false}
+                        helperText={passwordState === false ? "please input a valid password" : ""}
                     />
                 </Stack>
+
+                {!isValidAccount && <h2>Username or password is invalid! </h2>}
                 <Box pt={2} display='flex' justifyContent='center' alignItems='center'>
                     <Button 
                         type="submit"

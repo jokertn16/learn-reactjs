@@ -5,7 +5,7 @@ import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { useState } from "react";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-function ExpenseForm(props) {
+function ProductForm(props) {
     const [title, setTitle] = useState('');
     const [amount, setAmount] = useState('');
     const [inputDate, setInputDate] = useState(new Date());
@@ -14,7 +14,7 @@ function ExpenseForm(props) {
     const [isValidAmount, setIsValidAmount] = useState(true);
     const [formIsValid, setFormIsValid] = useState(false);
 
-    /// continue expenseForm validation
+    /// continue productForm validation
 
     const titleChangeHandler = (event) => {
         setTitle(event.target.value);
@@ -40,12 +40,12 @@ function ExpenseForm(props) {
     const submitHandler = (event) => {
         event.preventDefault();
 
-        var expenseData = {
+        var productData = {
             title: title,
             amount: amount,
             date: inputDate
         };
-        props.onSaveExpense(expenseData);
+        props.onSaveProduct(productData);
         setTitle('');
         setAmount('');
         setIsValidTitle(true);
@@ -58,7 +58,7 @@ function ExpenseForm(props) {
             <form onSubmit={submitHandler}>
                 <Stack spacing={2} pt={5}>
                     <TextField 
-                        id="expense-form-title" 
+                        id="product-form-title" 
                         label="Title" 
                         variant="outlined"
                         value={title}
@@ -68,7 +68,7 @@ function ExpenseForm(props) {
                         helperText={!isValidTitle ? "please input a valid title" : ""}
                     />
                     <TextField 
-                        id="expense-form-amount" 
+                        id="product-form-amount" 
                         label="Amount"
                         variant="outlined"
                         // type="number"
@@ -96,7 +96,7 @@ function ExpenseForm(props) {
                         color="primary"
                         disabled={!formIsValid}
                         endIcon={<Send />}
-                    >Add Expense</Button>
+                    >Add Product</Button>
                 </Box>
             </form>
         </Container>
@@ -104,4 +104,4 @@ function ExpenseForm(props) {
     );
 }
 
-export default ExpenseForm;
+export default ProductForm;

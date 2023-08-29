@@ -1,12 +1,13 @@
 import './App.css';
-import Expense from './components/Expense/Expense';
+import Product from './components/Product/Product';
 import { useEffect, useState } from 'react';
-import NewExpense from './components/NewExpense/NewExpense';
+import NewProduct from './components/NewProduct/NewProduct';
 import Navigation from './components/Navigation/Navigation';
 import Login from './components/Login/Login';
+import AuthContext from './components/store/AuthContext';
 
 function App() {
-  const initialExpenses = [
+  const initialProducts = [
     {id: 1, title: 'Petrol Gas', amount: 2, date: new Date(2023, 8, 8)},
     {id: 2, title: 'Cinema', amount: 10, date: new Date(2022, 7, 4)},
     {id: 3, title: 'Coffee', amount: 5, date: new Date(2023, 4, 5)},
@@ -15,7 +16,8 @@ function App() {
 
   // const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('is_login'));
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [expenses, setExpenses] = useState(initialExpenses);
+  const [isValidAccount, setIsValidAccount] = useState(true);
+  const [products, setProducts] = useState(initialProducts);
 
   useEffect(() => {
     if(localStorage.getItem('is_login') === '1') {
@@ -25,8 +27,14 @@ function App() {
 
   const loginHandler = (username, password) => {
     /// TO-DO: check login
-    setIsLoggedIn(true);
-    localStorage.setItem('is_login', '1')
+    if(username === 'thu' && password === '123') {
+      setIsLoggedIn(true);
+      localStorage.setItem('is_login', '1')
+      setIsValidAccount(true)
+    } else {
+      setIsValidAccount(false)
+    }
+
   }
   const logoutHandler = () => {
     setIsLoggedIn(false);
@@ -34,7 +42,7 @@ function App() {
 
 
   }
-  // const [expenses, setExpenses] = useState(initialExpenses);
+  // const [products, setProducts] = useState(initialProducts);
 
   // const loginHandler = (username, password) => {
   //   /// TO-DO: check login
@@ -47,26 +55,27 @@ function App() {
 
   // }
 
-  const addExpenseHandler = (data) => {
-    setExpenses(previousState => {
+  const addProductHandler = (data) => {
+    setProducts(previousState => {
       return [data, ...previousState];
     });
   }
 
+
   return (
-    <>
+    <AuthContext.Provider value={{ storeIsLoggedIn: isLoggedIn,  login: loginHandler , logout: logoutHandler }}>
       {isLoggedIn && 
-        <Navigation onLogout={logoutHandler} >
-          <NewExpense onAddExpense={addExpenseHandler} />
-          <Expense expenses={expenses}></Expense>
+        <Navigation  >
+          <NewProduct onAddProduct={addProductHandler} />
+          <Product products={products}></Product>
         </Navigation>
       }
 
-      {!isLoggedIn && <Login onLogin={loginHandler} />}
+      {!isLoggedIn && <Login isValidAccount={isValidAccount}/>}
 
 
       
-    </>
+    </AuthContext.Provider>
   );
 }
 
