@@ -8,6 +8,7 @@ import AuthContext from './components/store/AuthContext';
 import { DrawerHeader, Main } from './components/UI/StyleMUI';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import ProtectedRoute from './components/gaurd/ProtectedRoute';
+import ItemList from './components/Shop/ItemList'
 
 function App() {
   const initialProducts = [
@@ -82,8 +83,7 @@ function App() {
           <Route path='/shop' element={
             <Main open={isDrawerOpen}>
               <DrawerHeader />
-              <NewProduct onAddProduct={addProductHandler} />
-              <Product products={products}></Product>
+              <ItemList/>
             </Main>
           }/>
         </Route>
